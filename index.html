@@ -1,0 +1,2370 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TUS Təkrar və Test İzləyicisi</title>
+  <meta name="description" content="Tıpta Uzmanlık Sınavı hazırlığı üçün branş, alt bölüm, təkrar və test izləmə proqramı">
+  <meta name="theme-color" content="#090d16">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    :root {
+      --bg-main: #090d16;
+      --bg-card: #111827;
+      --bg-card-hover: #162032;
+      --bg-input: #1a2333;
+      --bg-subtopic: #141c2c;
+      --border-color: #243046;
+      --border-light: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --success-dark: #059669;
+      --success-light: #34d399;
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --danger-hover: #dc2626;
+      --warning: #f59e0b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.95) 0%, rgba(9, 13, 22, 0.95) 100%);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      padding: 14px 0;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+      flex-shrink: 0;
+    }
+
+    .logo-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      user-select: none;
+      outline: none;
+      white-space: nowrap;
+      min-height: 42px;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-light);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-icon {
+      width: 34px;
+      height: 34px;
+      min-height: 34px;
+      padding: 0;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: var(--bg-input);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+
+    .btn-icon.danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-icon.edit:hover {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    /* Connection status badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      border-radius: var(--radius-full);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 20px 0 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-light);
+      transform: translateY(-2px);
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .stat-icon.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+    .stat-icon.green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .stat-icon.red { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+    .stat-info .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .stat-info .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 44px;
+      padding: 0 16px 0 42px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .controls-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Empty State */
+    .empty-state {
+      background: var(--bg-card);
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 48px 24px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .empty-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .empty-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 24px;
+      font-size: 0.95rem;
+    }
+
+    /* Branches List */
+    .branches-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Branch Card */
+    .branch-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .branch-card:hover {
+      border-color: var(--border-light);
+    }
+
+    .branch-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid transparent;
+      transition: background 0.2s;
+    }
+
+    .branch-card.expanded .branch-header {
+      border-bottom-color: var(--border-color);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .branch-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .branch-chevron {
+      color: var(--text-muted);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+
+    .branch-card.expanded .branch-chevron {
+      transform: rotate(90deg);
+    }
+
+    .branch-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .branch-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      background: var(--bg-input);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .badge-reps {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-tests {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .branch-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Branch Content / Subtopics */
+    .branch-content {
+      display: none;
+      padding: 16px 20px;
+      background: var(--bg-main);
+    }
+
+    .branch-card.expanded .branch-content {
+      display: block;
+    }
+
+    .subtopics-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Subtopic Card / Item */
+    .subtopic-item {
+      background: var(--bg-subtopic);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+
+    .subtopic-item:hover {
+      border-color: var(--border-light);
+      background: #182235;
+    }
+
+    .subtopic-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 8px;
+    }
+
+    .subtopic-title-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subtopic-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      word-break: break-word;
+    }
+
+    .subtopic-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Tracking Rows */
+    .tracking-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .section-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      min-width: 130px;
+    }
+
+    .section-tag.green-tag {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .section-tag.red-tag {
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .items-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    /* GREEN COMPLETED BADGE PILL (Topic Revision) */
+    .completed-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .completed-pill:hover {
+      background: linear-gradient(135deg, #047857 0%, #059669 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);
+    }
+
+    .completed-pill:active {
+      transform: scale(0.95);
+    }
+
+    /* RED COMPLETED BADGE PILL (Test / Question Bank) */
+    .completed-pill.pill-test {
+      background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+    }
+
+    .completed-pill.pill-test:hover {
+      background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+    }
+
+    .completed-pill .check-icon {
+      width: 14px;
+      height: 14px;
+      stroke-width: 2.5;
+    }
+
+    .completed-pill .pill-del-hint {
+      opacity: 0;
+      margin-left: 2px;
+      font-size: 0.75rem;
+      transition: opacity 0.15s;
+    }
+
+    .completed-pill:hover .pill-del-hint {
+      opacity: 0.9;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* +1 Tekrar Button (Green) */
+    .btn-add-rep {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      background: rgba(16, 185, 129, 0.12);
+      border: 1.5px dashed #10b981;
+      color: #34d399;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      min-height: 32px;
+    }
+
+    .btn-add-rep:hover {
+      background: #10b981;
+      border-style: solid;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* + Test Elave Et Button (Red) */
+    .btn-add-test {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      background: rgba(239, 68, 68, 0.12);
+      border: 1.5px dashed #ef4444;
+      color: #f87171;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      min-height: 32px;
+    }
+
+    .btn-add-test:hover {
+      background: #ef4444;
+      border-style: solid;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Quick Test Suggestion Chips */
+    .chip-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .chip-btn {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: var(--radius-full);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .chip-btn:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .subtopics-empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+    }
+
+    .subtopics-empty button {
+      margin-top: 10px;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: scaleUp 0.2s ease-out;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes scaleUp {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      background: rgba(0, 0, 0, 0.15);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    /* Device Connect QR Area */
+    .qr-container {
+      text-align: center;
+      margin: 14px 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-box {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      min-width: 194px;
+      min-height: 194px;
+    }
+
+    .qr-box svg {
+      display: block;
+      width: 180px;
+      height: 180px;
+    }
+
+    .qr-url-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .notice-card {
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .notice-card.warning {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fde68a;
+    }
+
+    .notice-card.success {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #a7f3d0;
+    }
+
+    .notice-card.info {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #bfdbfe;
+    }
+
+    .guide-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .step-number {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 150;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      color: #ffffff;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      animation: slideInRight 0.3s ease-out;
+      pointer-events: auto;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .header-content {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .header-actions {
+        justify-content: space-between;
+      }
+      .controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .section-tag {
+        min-width: 100%;
+        margin-bottom: 4px;
+      }
+      .stat-card {
+        padding: 12px;
+      }
+      .stat-info .stat-value {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container header-content">
+      <div class="logo-area">
+        <div class="logo-badge">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="logo-title">
+            TUS Təkrar və Test İzləyicisi
+            <span class="status-badge" id="syncStatus">
+              <span class="status-dot"></span>
+              <span id="syncStatusText">Lokal Rejim</span>
+            </span>
+          </h1>
+          <p class="logo-subtitle">Tıpta Uzmanlık Sınavı hazırlıq, təkrar və test idarəetməsi</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="openConnectModal()" title="Telefon və ya Planşet ilə qoşulun">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+            <line x1="12" y1="18" x2="12.01" y2="18"/>
+          </svg>
+          <span>Cihaz Qoş (QR)</span>
+        </button>
+
+        <button class="btn btn-secondary" onclick="openBackupModal()" title="Məlumatları Yadda Saxla / Bərpa Et">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          <span>Yedək / Bərpa</span>
+        </button>
+
+        <button class="btn btn-primary" onclick="openAddBranchModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Yeni Branş</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+
+    <!-- Stats Summary -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value" id="statBranches">0</div>
+          <div class="stat-label">Cəmi Branş</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon purple">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value" id="statChapters">0</div>
+          <div class="stat-label">Cəmi Bölüm</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value" id="statRepetitions">0</div>
+          <div class="stat-label">Mövzu Təkrarları (Yaşıl)</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon red">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 11 12 14 22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value" id="statTests">0</div>
+          <div class="stat-label">İşlənən Testlər (Qırmızı)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <div class="search-box">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Branş, bölüm və ya test axtar..." oninput="handleSearch()">
+      </div>
+
+      <div class="controls-buttons">
+        <button class="btn btn-secondary" onclick="toggleExpandAll()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="7 13 12 18 17 13"/>
+            <polyline points="7 6 12 11 17 6"/>
+          </svg>
+          <span id="expandAllBtnText">Hamısını Aç</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Branches Container -->
+    <div id="branchesContainer" class="branches-list">
+      <!-- Populated dynamically -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <div class="empty-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+      </div>
+      <h2 class="empty-title">Hələ heç bir branş əlavə edilməyib</h2>
+      <p class="empty-desc">
+        TUS hazırlığınız üçün istədiyiniz branşları (məsələn: Dahiliye, Pediatri, Genel Cerrahi və s.) və alt bölümləri (məsələn: Hematoloji, Kardiyoloji) özünüz əlavə edərək başlaya bilərsiniz. Hər bölümdə həm nəzəri təkrarı (yaşıl), həm də işlədiyiniz testləri (qırmızı) qeyd edə bilərsiniz.
+      </p>
+      <button class="btn btn-primary" onclick="openAddBranchModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span>İlk Branşı Əlavə Et</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- MODAL: Add/Edit Branch -->
+  <div id="branchModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="branchModalTitle">Yeni Branş Əlavə Et</h3>
+        <button class="btn-icon" onclick="closeModal('branchModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Branşın Adı (Ana Başlıq)</label>
+          <input type="text" id="branchNameInput" class="form-input" placeholder="Məs: Dahiliye, Pediatri, Kadın Doğum..." autofocus>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('branchModal')">İmtina</button>
+        <button class="btn btn-primary" id="saveBranchBtn" onclick="saveBranch()">Yadda Saxla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Add/Edit Subtopic -->
+  <div id="subtopicModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="subtopicModalTitle">Yeni Bölüm Əlavə Et</h3>
+        <button class="btn-icon" onclick="closeModal('subtopicModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Bölüm / Alt Başlıq Adı</label>
+          <input type="text" id="subtopicNameInput" class="form-input" placeholder="Məs: Hematoloji, Kardiyoloji, Nefroloji..." autofocus>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('subtopicModal')">İmtina</button>
+        <button class="btn btn-primary" id="saveSubtopicBtn" onclick="saveSubtopic()">Yadda Saxla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Add Test (Red Badge) -->
+  <div id="testModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color: #f87171;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 11 12 14 22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+          <span id="testModalTitle">Yeni Test Əlavə Et</span>
+        </h3>
+        <button class="btn-icon" onclick="closeModal('testModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">İşlədiyiniz Testin / Sual Kitabının Adı</label>
+          <input type="text" id="testNameInput" class="form-input" placeholder="Məs: tüm-tus soruları 1, TTS 2024, Vaka Testi..." autofocus>
+        </div>
+
+        <div>
+          <label class="form-label" style="font-size: 0.78rem;">Sürətli Seçimlər (vursanız birbaşa xanaya yazılacaq):</label>
+          <div class="chip-container">
+            <button type="button" class="chip-btn" onclick="setTestNamePreset('TümTUS Soruları 1')">TümTUS Soruları 1</button>
+            <button type="button" class="chip-btn" onclick="setTestNamePreset('TümTUS Soruları 2')">TümTUS Soruları 2</button>
+            <button type="button" class="chip-btn" onclick="setTestNamePreset('TTS Soruları')">TTS Soruları</button>
+            <button type="button" class="chip-btn" onclick="setTestNamePreset('Klinik Vaka Testi')">Klinik Vaka Testi</button>
+            <button type="button" class="chip-btn" onclick="setTestNamePreset('Deneme Sınavı')">Deneme Sınavı</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('testModal')">İmtina</button>
+        <button class="btn btn-danger" onclick="saveTest()" style="background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);">
+          ✓ Completed Əlavə Et
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Manage/Delete Test -->
+  <div id="manageTestModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Testi Redaktə Et və ya Sil</h3>
+        <button class="btn-icon" onclick="closeModal('manageTestModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Testin Adı</label>
+          <input type="text" id="editTestNameInput" class="form-input">
+        </div>
+        <p id="manageTestMeta" style="font-size: 0.8rem; color: var(--text-muted);"></p>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button class="btn btn-danger" onclick="executeDeleteTest()">Testi Sil</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="closeModal('manageTestModal')">İmtina</button>
+          <button class="btn btn-primary" onclick="saveEditTest()">Yadda Saxla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Delete Confirmation -->
+  <div id="deleteModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Silinməni Təsdiqləyin</h3>
+        <button class="btn-icon" onclick="closeModal('deleteModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="deleteModalMessage" style="color: var(--text-muted); font-size: 0.95rem;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('deleteModal')">İmtina</button>
+        <button class="btn btn-danger" id="confirmDeleteBtn">Bəli, Sil</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Delete Repetition Confirmation -->
+  <div id="deleteRepModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Mövzu Təkrarını Sil</h3>
+        <button class="btn-icon" onclick="closeModal('deleteRepModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="deleteRepMessage" style="color: var(--text-muted); font-size: 0.95rem;">Bu təkrarı silmək istədiyinizdən əminsiniz?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('deleteRepModal')">İmtina</button>
+        <button class="btn btn-danger" id="confirmDeleteRepBtn">Təkrarı Sil</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Device Connect / QR Code -->
+  <div id="connectModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">📱 Telefon və Planşet ilə Qoşulun</h3>
+        <button class="btn-icon" onclick="closeModal('connectModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        
+        <div id="serverAlertBox" class="notice-card info">
+          <div>
+            <strong id="serverAlertTitle">Server Vəziyyəti Yoxlanılır...</strong>
+            <p id="serverAlertDesc" style="margin-top: 4px; font-size: 0.8rem;"></p>
+          </div>
+        </div>
+
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 8px;">
+          Telefon və ya planşetinizin kamerasını aşağıdakı QR koda tutaraq dərhal proqramı açın:
+        </p>
+
+        <div class="qr-container">
+          <div class="qr-box" id="qrcode"></div>
+          
+          <div class="qr-url-row">
+            <input type="text" id="qrUrlInput" class="form-input" style="font-family: monospace; font-size: 0.88rem;" oninput="updateQrCodeFromInput()">
+            <button class="btn btn-secondary" onclick="copyConnectUrl()" title="Linki kopyala" style="min-height: 40px; padding: 0 14px;">
+              Kopyala
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+          <h4 style="font-size: 0.88rem; color: #ffffff; margin-bottom: 8px;">📲 Ən Rahat İstifadə Qaydası:</h4>
+          
+          <div class="guide-step">
+            <span class="step-number">1</span>
+            <span><strong>Eyni Wi-Fi:</strong> Kompüter və telefonunuzun/planşetinizin eyni Wi-Fi şəbəkəsinə qoşulduğundan əmin olun.</span>
+          </div>
+
+          <div class="guide-step">
+            <span class="step-number">2</span>
+            <span><strong>Serveri İşə Salın:</strong> Kompüterdə qovluqdakı <strong>run_tus_tracker.bat</strong> faylını açın.</span>
+          </div>
+
+          <div class="guide-step">
+            <span class="step-number">3</span>
+            <span><strong>Ana Ekrana Əlavə Edin (App Kimi):</strong>
+              <br>• <strong>iPhone / iPad (Safari):</strong> Paylaş (Share) $\rightarrow$ <em>"Ana Ekrana Əlavə Et"</em>
+              <br>• <strong>Android Tablet (Chrome):</strong> 3 Nöqtə $\rightarrow$ <em>"Tətbiqi quraşdır"</em> və ya <em>"Ana ekrana əlavə et"</em>
+            </span>
+          </div>
+
+          <div class="guide-step">
+            <span class="step-number">4</span>
+            <span><strong>Wi-Fi Olmadan (Hər Yerdə):</strong> Evdə deyilsinizsə, <strong>"Yedək / Bərpa"</strong> menyusundan bir kliklə kodu kopyalayıb Telegram/WhatsApp vasitəsilə digər cihazınıza göndərə bilərsiniz.</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('connectModal')">Bağla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Backup & Restore -->
+  <div id="backupModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">💾 Yaddaş, Ehtiyat Nüsxə & Sinxronizasiya</h3>
+        <button class="btn-icon" onclick="closeModal('backupModal')">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="notice-card success">
+          <div>
+            <strong>✓ Yazdıqlarınız Həmişə Yaddaşda Qalır!</strong>
+            <p style="margin-top: 3px; font-size: 0.8rem;">
+              Bu cihazda qeyd etdiyiniz bütün branşlar, bölümlər, təkrarlar və testlər brauzerin öz daimi yaddaşında saxlanılır (səhifəni bağlasanız belə itmir).
+            </p>
+          </div>
+        </div>
+
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">
+          Məlumatlarınızı kompüterə yükləyə və ya başqa cihaza (iPhone / Android planşet) köçürə bilərsiniz:
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px;">
+          <button class="btn btn-secondary" onclick="exportDataJson()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Fayla Yüklə (Export)</span>
+          </button>
+
+          <label class="btn btn-secondary" style="margin: 0; cursor: pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Fayldan Bərpa (Import)</span>
+            <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importDataJson(event)">
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Sürətli Sinxronizasiya Kodu (Kopyala & Digər Cihaza Göndər)</label>
+          <textarea id="syncCodeTextarea" class="form-textarea" placeholder="Buradakı kodu kopyalayaraq Telegram, WhatsApp və ya qeydlərlə digər cihazınıza göndərə bilərsiniz..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" style="flex: 1;" onclick="copySyncCode()">Kodu Kopyala</button>
+          <button class="btn btn-primary" style="flex: 1;" onclick="restoreFromSyncCode()">Kodu Tətbiq Et</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('backupModal')">Bağla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- QR GENERATOR SCRIPT -->
+  <script src="qrcode.min.js"></script>
+
+  <script>
+    /* ==========================================================================
+       TUS REVISION & TEST TRACKER - JAVASCRIPT CORE
+       ========================================================================== */
+
+    let state = {
+      branches: []
+    };
+
+    let editingBranchId = null;
+    let editingSubtopicContext = { branchId: null, subtopicId: null };
+    let activeTestContext = { branchId: null, subtopicId: null };
+    let editingTestContext = { branchId: null, subtopicId: null, testId: null };
+    let deleteTarget = { type: null, branchId: null, subtopicId: null };
+    let deleteRepTarget = { branchId: null, subtopicId: null, repId: null };
+    let isServerMode = false;
+    let expandedBranches = new Set();
+    let currentSearchTerm = "";
+    let serverInfo = null;
+
+    // Web Audio Synthesizer
+    let audioCtx = null;
+    function playClickSound(freq = 600, duration = 0.08) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + duration);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    // Initialize
+    async function initApp() {
+      await checkServerAndLoad();
+      render();
+
+      document.getElementById('branchNameInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') saveBranch();
+      });
+      document.getElementById('subtopicNameInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') saveSubtopic();
+      });
+      document.getElementById('testNameInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') saveTest();
+      });
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      }
+    }
+
+    // Load data from server or localStorage
+    async function checkServerAndLoad() {
+      try {
+        const infoRes = await fetch('/api/info', { cache: 'no-store' });
+        if (infoRes.ok) {
+          serverInfo = await infoRes.json();
+          isServerMode = true;
+          document.getElementById('syncStatus').style.background = 'rgba(16, 185, 129, 0.15)';
+          document.getElementById('syncStatus').style.borderColor = 'rgba(16, 185, 129, 0.4)';
+          document.getElementById('syncStatusText').textContent = 'Server Aktiv (Wi-Fi Canlı)';
+        }
+      } catch (e) {
+        isServerMode = false;
+      }
+
+      if (isServerMode) {
+        try {
+          const res = await fetch('/api/data', { cache: 'no-store' });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              state.branches = data;
+              state.branches.forEach(b => expandedBranches.add(b.id));
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Server load failed, falling back to localStorage');
+        }
+      }
+
+      // LocalStorage fallback
+      document.getElementById('syncStatus').style.background = 'rgba(59, 130, 246, 0.15)';
+      document.getElementById('syncStatus').style.borderColor = 'rgba(59, 130, 246, 0.4)';
+      document.getElementById('syncStatusText').textContent = 'Daimi Cihaz Yaddaşı';
+      
+      const local = localStorage.getItem('tus_tracker_data');
+      if (local) {
+        try {
+          state.branches = JSON.parse(local);
+          state.branches.forEach(b => expandedBranches.add(b.id));
+        } catch (e) {
+          state.branches = [];
+        }
+      } else {
+        state.branches = [];
+      }
+    }
+
+    // Save Data
+    async function persistData() {
+      localStorage.setItem('tus_tracker_data', JSON.stringify(state.branches));
+
+      if (isServerMode) {
+        try {
+          await fetch('/api/data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(state.branches)
+          });
+        } catch (e) {
+          console.warn('Server sync failed, saved locally:', e);
+        }
+      }
+      updateStats();
+    }
+
+    // Toast Notification
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      const strokeColor = type === 'success' ? '#10b981' : (type === 'test' ? '#ef4444' : '#f59e0b');
+      toast.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span>${escapeHtml(message)}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Stats Calculation
+    function updateStats() {
+      const branchesCount = state.branches.length;
+      let chaptersCount = 0;
+      let repetitionsCount = 0;
+      let testsCount = 0;
+
+      state.branches.forEach(b => {
+        if (b.chapters && Array.isArray(b.chapters)) {
+          chaptersCount += b.chapters.length;
+          b.chapters.forEach(c => {
+            if (c.repetitions && Array.isArray(c.repetitions)) {
+              repetitionsCount += c.repetitions.length;
+            }
+            if (c.tests && Array.isArray(c.tests)) {
+              testsCount += c.tests.length;
+            }
+          });
+        }
+      });
+
+      document.getElementById('statBranches').textContent = branchesCount;
+      document.getElementById('statChapters').textContent = chaptersCount;
+      document.getElementById('statRepetitions').textContent = repetitionsCount;
+      document.getElementById('statTests').textContent = testsCount;
+    }
+
+    // Render Function
+    function render() {
+      updateStats();
+      const container = document.getElementById('branchesContainer');
+      const emptyState = document.getElementById('emptyState');
+
+      if (!state.branches || state.branches.length === 0) {
+        container.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      const term = currentSearchTerm.trim().toLowerCase();
+      let html = '';
+
+      state.branches.forEach((branch) => {
+        const branchMatches = branch.name.toLowerCase().includes(term);
+        const matchingChapters = (branch.chapters || []).filter(c => {
+          if (branchMatches || c.name.toLowerCase().includes(term)) return true;
+          // Also match test names inside chapter!
+          if (c.tests && Array.isArray(c.tests)) {
+            return c.tests.some(t => t.name.toLowerCase().includes(term));
+          }
+          return false;
+        });
+
+        if (term && !branchMatches && matchingChapters.length === 0) {
+          return;
+        }
+
+        const isExpanded = expandedBranches.has(branch.id) || term.length > 0;
+        const totalChapters = branch.chapters ? branch.chapters.length : 0;
+        let totalReps = 0;
+        let totalTests = 0;
+
+        if (branch.chapters) {
+          branch.chapters.forEach(c => {
+            totalReps += (c.repetitions ? c.repetitions.length : 0);
+            totalTests += (c.tests ? c.tests.length : 0);
+          });
+        }
+
+        html += `
+          <div class="branch-card ${isExpanded ? 'expanded' : ''}" id="branch_${branch.id}">
+            <div class="branch-header" onclick="toggleBranch('${branch.id}')">
+              <div class="branch-header-left">
+                <svg class="branch-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                <h3 class="branch-title">${escapeHtml(branch.name)}</h3>
+                <div class="branch-meta">
+                  <span class="badge">${totalChapters} bölüm</span>
+                  <span class="badge badge-reps">🟢 ${totalReps} təkrar</span>
+                  <span class="badge badge-tests">🔴 ${totalTests} test</span>
+                </div>
+              </div>
+              <div class="branch-actions" onclick="event.stopPropagation()">
+                <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; min-height: 32px;" onclick="openAddSubtopicModal('${branch.id}')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  <span>Bölüm</span>
+                </button>
+                <button class="btn-icon edit" onclick="openEditBranchModal('${branch.id}')" title="Branş adını dəyiş">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  </svg>
+                </button>
+                <button class="btn-icon danger" onclick="confirmDeleteBranch('${branch.id}')" title="Branşı sil">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="branch-content">
+              ${renderChapters(branch, matchingChapters)}
+            </div>
+          </div>
+        `;
+      });
+
+      if (!html && term) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: 32px;">
+            <p style="color: var(--text-muted);">"<strong>${escapeHtml(term)}</strong>" axtarışına uyğun heç bir branş, bölüm və ya test tapılmadı.</p>
+          </div>
+        `;
+      } else {
+        container.innerHTML = html;
+      }
+    }
+
+    // Render Chapters list inside a branch
+    function renderChapters(branch, chapters) {
+      if (!chapters || chapters.length === 0) {
+        return `
+          <div class="subtopics-empty">
+            <p>Bu branşda hələ alt bölüm (mövzu) yoxdur.</p>
+            <button class="btn btn-secondary" style="font-size: 0.85rem;" onclick="openAddSubtopicModal('${branch.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>İlk Bölümü Əlavə Et</span>
+            </button>
+          </div>
+        `;
+      }
+
+      let html = '<div class="subtopics-list">';
+
+      chapters.forEach(chap => {
+        const reps = chap.repetitions || [];
+        const tests = chap.tests || [];
+
+        // 1. GREEN Revisions Pills
+        let repsHtml = '';
+        reps.forEach((rep, index) => {
+          const repNumber = index + 1;
+          const dateTitle = rep.dateStr ? `Tamamlanma tarixi: ${rep.dateStr}` : `Təkrar #${repNumber}`;
+          repsHtml += `
+            <div class="completed-pill" onclick="confirmDeleteRepetition('${branch.id}', '${chap.id}', '${rep.id}', ${repNumber})" title="${dateTitle} (Silmək üçün vurun)">
+              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>${repNumber} Completed</span>
+              <span class="pill-del-hint">✕</span>
+            </div>
+          `;
+        });
+
+        // 2. RED Tests Pills
+        let testsHtml = '';
+        tests.forEach((t) => {
+          const dateTitle = t.dateStr ? `Tamamlanma tarixi: ${t.dateStr}` : `Test: ${t.name}`;
+          testsHtml += `
+            <div class="completed-pill pill-test" onclick="openManageTestModal('${branch.id}', '${chap.id}', '${t.id}')" title="${dateTitle} (Dəyişmək və ya silmək üçün vurun)">
+              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>${escapeHtml(t.name)} Completed</span>
+              <span class="pill-del-hint">✕</span>
+            </div>
+          `;
+        });
+
+        html += `
+          <div class="subtopic-item">
+            
+            <!-- Chapter Title & Actions Row -->
+            <div class="subtopic-header-row">
+              <div class="subtopic-title-area">
+                <span class="subtopic-title">📖 ${escapeHtml(chap.name)}</span>
+              </div>
+              <div class="subtopic-actions">
+                <button class="btn-icon edit" onclick="openEditSubtopicModal('${branch.id}', '${chap.id}')" title="Bölüm adını dəyiş">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  </svg>
+                </button>
+                <button class="btn-icon danger" onclick="confirmDeleteSubtopic('${branch.id}', '${chap.id}')" title="Bölümü sil">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- ROW 1: GREEN Topic Revisions -->
+            <div class="tracking-section">
+              <span class="section-tag green-tag">🟢 Mövzu Təkrarı:</span>
+              <div class="items-wrap">
+                ${repsHtml}
+                <button class="btn-add-rep" onclick="addRepetition('${branch.id}', '${chap.id}')" title="Yeni mövzu təkrarı qeyd et">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  <span>+1 Təkrar</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- ROW 2: RED Tests / Questions -->
+            <div class="tracking-section">
+              <span class="section-tag red-tag">🔴 İşlənən Testlər:</span>
+              <div class="items-wrap">
+                ${testsHtml}
+                <button class="btn-add-test" onclick="openAddTestModal('${branch.id}', '${chap.id}')" title="İşlədiyiniz testi əlavə edin">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  <span>+ Test Əlavə Et</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      return html;
+    }
+
+    function toggleBranch(branchId) {
+      if (expandedBranches.has(branchId)) {
+        expandedBranches.delete(branchId);
+      } else {
+        expandedBranches.add(branchId);
+      }
+      render();
+    }
+
+    function toggleExpandAll() {
+      const btnText = document.getElementById('expandAllBtnText');
+      if (expandedBranches.size === state.branches.length) {
+        expandedBranches.clear();
+        btnText.textContent = 'Hamısını Aç';
+      } else {
+        state.branches.forEach(b => expandedBranches.add(b.id));
+        btnText.textContent = 'Hamısını Bağla';
+      }
+      render();
+    }
+
+    function handleSearch() {
+      currentSearchTerm = document.getElementById('searchInput').value;
+      render();
+    }
+
+    /* ==========================================================================
+       TOPIC REPETITIONS (GREEN)
+       ========================================================================== */
+
+    function addRepetition(branchId, chapterId) {
+      const branch = state.branches.find(b => b.id === branchId);
+      if (!branch) return;
+      const chap = branch.chapters.find(c => c.id === chapterId);
+      if (!chap) return;
+
+      if (!chap.repetitions) chap.repetitions = [];
+
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const dateStr = `${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+      const newRep = {
+        id: 'rep_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        timestamp: Date.now(),
+        dateStr: dateStr
+      };
+
+      chap.repetitions.push(newRep);
+      playClickSound(750, 0.1);
+      persistData();
+      render();
+      showToast(`${chap.name}: ${chap.repetitions.length}-ci mövzu təkrarı tamamlandı!`);
+    }
+
+    function confirmDeleteRepetition(branchId, chapterId, repId, repNumber) {
+      deleteRepTarget = { branchId, subtopicId: chapterId, repId };
+      const branch = state.branches.find(b => b.id === branchId);
+      const chap = branch ? branch.chapters.find(c => c.id === chapterId) : null;
+      const chapterName = chap ? chap.name : 'Bu bölüm';
+
+      document.getElementById('deleteRepMessage').innerHTML = `
+        <strong>${escapeHtml(chapterName)}</strong> bölümünün <strong>${repNumber}-ci Completed</strong> mövzu təkrarını silmək istəyirsiniz?
+      `;
+      document.getElementById('confirmDeleteRepBtn').onclick = executeDeleteRepetition;
+      openModal('deleteRepModal');
+    }
+
+    function executeDeleteRepetition() {
+      const { branchId, subtopicId, repId } = deleteRepTarget;
+      const branch = state.branches.find(b => b.id === branchId);
+      if (branch) {
+        const chap = branch.chapters.find(c => c.id === subtopicId);
+        if (chap && chap.repetitions) {
+          chap.repetitions = chap.repetitions.filter(r => r.id !== repId);
+          persistData();
+          render();
+          showToast('Mövzu təkrarı silindi', 'info');
+        }
+      }
+      closeModal('deleteRepModal');
+    }
+
+    /* ==========================================================================
+       TESTS TRACKING (RED)
+       ========================================================================== */
+
+    function openAddTestModal(branchId, chapterId) {
+      activeTestContext = { branchId, subtopicId: chapterId };
+      const branch = state.branches.find(b => b.id === branchId);
+      const chap = branch ? branch.chapters.find(c => c.id === chapterId) : null;
+      
+      document.getElementById('testModalTitle').textContent = `${chap ? chap.name : ''} - Test Əlavə Et`;
+      document.getElementById('testNameInput').value = '';
+      openModal('testModal');
+      setTimeout(() => document.getElementById('testNameInput').focus(), 100);
+    }
+
+    function setTestNamePreset(name) {
+      document.getElementById('testNameInput').value = name;
+      document.getElementById('testNameInput').focus();
+    }
+
+    function saveTest() {
+      const name = document.getElementById('testNameInput').value.trim();
+      if (!name) {
+        alert('Zəhmət olmasa testin adını daxil edin (məs: tüm-tus soruları 1).');
+        return;
+      }
+
+      const { branchId, subtopicId } = activeTestContext;
+      const branch = state.branches.find(b => b.id === branchId);
+      if (!branch) return;
+      const chap = branch.chapters.find(c => c.id === subtopicId);
+      if (!chap) return;
+
+      if (!chap.tests) chap.tests = [];
+
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const dateStr = `${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+      const newTest = {
+        id: 'test_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        name: name,
+        timestamp: Date.now(),
+        dateStr: dateStr
+      };
+
+      chap.tests.push(newTest);
+      playClickSound(900, 0.12);
+      persistData();
+      render();
+      closeModal('testModal');
+      showToast(`${chap.name}: "${name} Completed" qeyd olundu!`, 'test');
+    }
+
+    function openManageTestModal(branchId, chapterId, testId) {
+      editingTestContext = { branchId, subtopicId: chapterId, testId };
+      const branch = state.branches.find(b => b.id === branchId);
+      const chap = branch ? branch.chapters.find(c => c.id === chapterId) : null;
+      const test = chap && chap.tests ? chap.tests.find(t => t.id === testId) : null;
+      if (!test) return;
+
+      document.getElementById('editTestNameInput').value = test.name;
+      document.getElementById('manageTestMeta').textContent = test.dateStr ? `Qeyd tarixi: ${test.dateStr}` : '';
+      openModal('manageTestModal');
+      setTimeout(() => document.getElementById('editTestNameInput').focus(), 100);
+    }
+
+    function saveEditTest() {
+      const newName = document.getElementById('editTestNameInput').value.trim();
+      if (!newName) {
+        alert('Testin adı boş ola bilməz.');
+        return;
+      }
+
+      const { branchId, subtopicId, testId } = editingTestContext;
+      const branch = state.branches.find(b => b.id === branchId);
+      if (branch) {
+        const chap = branch.chapters.find(c => c.id === subtopicId);
+        if (chap && chap.tests) {
+          const test = chap.tests.find(t => t.id === testId);
+          if (test) {
+            test.name = newName;
+            persistData();
+            render();
+            closeModal('manageTestModal');
+            showToast('Testin adı yeniləndi');
+          }
+        }
+      }
+    }
+
+    function executeDeleteTest() {
+      const { branchId, subtopicId, testId } = editingTestContext;
+      const branch = state.branches.find(b => b.id === branchId);
+      if (branch) {
+        const chap = branch.chapters.find(c => c.id === subtopicId);
+        if (chap && chap.tests) {
+          chap.tests = chap.tests.filter(t => t.id !== testId);
+          persistData();
+          render();
+          closeModal('manageTestModal');
+          showToast('Test silindi', 'info');
+        }
+      }
+    }
+
+    /* ==========================================================================
+       BRANCH CRUD
+       ========================================================================== */
+
+    function openAddBranchModal() {
+      editingBranchId = null;
+      document.getElementById('branchModalTitle').textContent = 'Yeni Branş Əlavə Et';
+      document.getElementById('branchNameInput').value = '';
+      openModal('branchModal');
+      setTimeout(() => document.getElementById('branchNameInput').focus(), 100);
+    }
+
+    function openEditBranchModal(branchId) {
+      const branch = state.branches.find(b => b.id === branchId);
+      if (!branch) return;
+      editingBranchId = branchId;
+      document.getElementById('branchModalTitle').textContent = 'Branş Adını Dəyiş';
+      document.getElementById('branchNameInput').value = branch.name;
+      openModal('branchModal');
+      setTimeout(() => document.getElementById('branchNameInput').focus(), 100);
+    }
+
+    function saveBranch() {
+      const name = document.getElementById('branchNameInput').value.trim();
+      if (!name) {
+        alert('Zəhmət olmasa branşın adını daxil edin.');
+        return;
+      }
+
+      if (editingBranchId) {
+        const branch = state.branches.find(b => b.id === editingBranchId);
+        if (branch) {
+          branch.name = name;
+          showToast(`Branş yeniləndi: ${name}`);
+        }
+      } else {
+        const newBranch = {
+          id: 'branch_' + Date.now(),
+          name: name,
+          createdAt: Date.now(),
+          chapters: []
+        };
+        state.branches.push(newBranch);
+        expandedBranches.add(newBranch.id);
+        showToast(`Yeni branş əlavə edildi: ${name}`);
+      }
+
+      persistData();
+      render();
+      closeModal('branchModal');
+    }
+
+    function confirmDeleteBranch(branchId) {
+      const branch = state.branches.find(b => b.id === branchId);
+      if (!branch) return;
+      deleteTarget = { type: 'branch', branchId };
+      const chapCount = branch.chapters ? branch.chapters.length : 0;
+      document.getElementById('deleteModalMessage').innerHTML = `
+        <strong>${escapeHtml(branch.name)}</strong> branşını və daxilindəki <strong>${chapCount} bölümü</strong> silmək istədiyinizdən əminsiniz? Bu əməliyyat geri qaytarıla bilməz.
+      `;
+      document.getElementById('confirmDeleteBtn').onclick = executeDelete;
+      openModal('deleteModal');
+    }
+
+    /* ==========================================================================
+       SUBTOPIC / CHAPTER CRUD
+       ========================================================================== */
+
+    function openAddSubtopicModal(branchId) {
+      editingSubtopicContext = { branchId, subtopicId: null };
+      const branch = state.branches.find(b => b.id === branchId);
+      document.getElementById('subtopicModalTitle').textContent = `${branch ? branch.name : ''} - Yeni Bölüm Əlavə Et`;
+      document.getElementById('subtopicNameInput').value = '';
+      openModal('subtopicModal');
+      setTimeout(() => document.getElementById('subtopicNameInput').focus(), 100);
+    }
+
+    function openEditSubtopicModal(branchId, subtopicId) {
+      const branch = state.branches.find(b => b.id === branchId);
+      if (!branch) return;
+      const chap = branch.chapters.find(c => c.id === subtopicId);
+      if (!chap) return;
+
+      editingSubtopicContext = { branchId, subtopicId };
+      document.getElementById('subtopicModalTitle').textContent = 'Bölüm Adını Dəyiş';
+      document.getElementById('subtopicNameInput').value = chap.name;
+      openModal('subtopicModal');
+      setTimeout(() => document.getElementById('subtopicNameInput').focus(), 100);
+    }
+
+    function saveSubtopic() {
+      const name = document.getElementById('subtopicNameInput').value.trim();
+      if (!name) {
+        alert('Zəhmət olmasa bölümün adını daxil edin.');
+        return;
+      }
+
+      const { branchId, subtopicId } = editingSubtopicContext;
+      const branch = state.branches.find(b => b.id === branchId);
+      if (!branch) return;
+
+      if (!branch.chapters) branch.chapters = [];
+
+      if (subtopicId) {
+        const chap = branch.chapters.find(c => c.id === subtopicId);
+        if (chap) {
+          chap.name = name;
+          showToast(`Bölüm yeniləndi: ${name}`);
+        }
+      } else {
+        const newChap = {
+          id: 'chap_' + Date.now(),
+          name: name,
+          createdAt: Date.now(),
+          repetitions: [],
+          tests: []
+        };
+        branch.chapters.push(newChap);
+        expandedBranches.add(branchId);
+        showToast(`Yeni bölüm əlavə edildi: ${name}`);
+      }
+
+      persistData();
+      render();
+      closeModal('subtopicModal');
+    }
+
+    function confirmDeleteSubtopic(branchId, subtopicId) {
+      const branch = state.branches.find(b => b.id === branchId);
+      if (!branch) return;
+      const chap = branch.chapters.find(c => c.id === subtopicId);
+      if (!chap) return;
+
+      deleteTarget = { type: 'subtopic', branchId, subtopicId };
+      document.getElementById('deleteModalMessage').innerHTML = `
+        <strong>${escapeHtml(chap.name)}</strong> bölümünü silmək istədiyinizdən əminsiniz?
+      `;
+      document.getElementById('confirmDeleteBtn').onclick = executeDelete;
+      openModal('deleteModal');
+    }
+
+    function executeDelete() {
+      if (deleteTarget.type === 'branch') {
+        state.branches = state.branches.filter(b => b.id !== deleteTarget.branchId);
+        showToast('Branş silindi');
+      } else if (deleteTarget.type === 'subtopic') {
+        const branch = state.branches.find(b => b.id === deleteTarget.branchId);
+        if (branch && branch.chapters) {
+          branch.chapters = branch.chapters.filter(c => c.id !== deleteTarget.subtopicId);
+          showToast('Bölüm silindi');
+        }
+      }
+      persistData();
+      render();
+      closeModal('deleteModal');
+    }
+
+    /* ==========================================================================
+       MODAL CONTROLS
+       ========================================================================== */
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal-backdrop')) {
+        event.target.classList.remove('active');
+      }
+    };
+
+    /* ==========================================================================
+       QR CODE & DEVICE CONNECT
+       ========================================================================== */
+
+    function generateSvgQr(text) {
+      const qrBox = document.getElementById('qrcode');
+      qrBox.innerHTML = '';
+
+      try {
+        if (typeof qrcode !== 'undefined') {
+          const qr = qrcode(0, 'M');
+          qr.addData(text);
+          qr.make();
+          const svgString = qr.createSvgTag({
+            cellSize: 5,
+            margin: 4
+          });
+          qrBox.innerHTML = svgString;
+          const svgEl = qrBox.querySelector('svg');
+          if (svgEl) {
+            svgEl.style.width = '180px';
+            svgEl.style.height = '180px';
+            svgEl.style.display = 'block';
+          }
+          return;
+        }
+      } catch (err) {
+        console.warn('SVG QR generator error:', err);
+      }
+
+      const encoded = encodeURIComponent(text);
+      qrBox.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encoded}" width="180" height="180" alt="QR Code" style="display:block;border-radius:4px;">`;
+    }
+
+    async function openConnectModal() {
+      openModal('connectModal');
+
+      let activeUrl = window.location.href;
+      let isServerRunning = isServerMode;
+
+      try {
+        const infoRes = await fetch('/api/info', { cache: 'no-store' });
+        if (infoRes.ok) {
+          serverInfo = await infoRes.json();
+          isServerRunning = true;
+          activeUrl = `http://${serverInfo.ip}:${serverInfo.port || 8080}`;
+        }
+      } catch (e) {
+        isServerRunning = false;
+      }
+
+      const alertBox = document.getElementById('serverAlertBox');
+      const alertTitle = document.getElementById('serverAlertTitle');
+      const alertDesc = document.getElementById('serverAlertDesc');
+
+      if (isServerRunning && serverInfo && serverInfo.ip) {
+        activeUrl = `http://${serverInfo.ip}:${serverInfo.port || 8080}`;
+        alertBox.className = 'notice-card success';
+        alertTitle.textContent = '🟢 Server Aktivdir (Wi-Fi Şəbəkəsində İşləyir)';
+        alertDesc.textContent = `Kompüter və telefon/planşet eyni Wi-Fi şəbəkəsindədirsə, bu QR kodu oxudaraq dərhal qoşula bilərsiniz.`;
+      } else {
+        if (window.location.protocol === 'file:') {
+          activeUrl = `http://192.168.50.121:8080`;
+        }
+        alertBox.className = 'notice-card warning';
+        alertTitle.textContent = '⚠️ Kompüterdə Server Hələ İşə Salınmayıb!';
+        alertDesc.textContent = `Telefon və ya planşetdən canlı qoşulmaq üçün kompüterdə qovluqdakı 'run_tus_tracker.bat' faylına iki dəfə klikləyin.`;
+      }
+
+      document.getElementById('qrUrlInput').value = activeUrl;
+      generateSvgQr(activeUrl);
+    }
+
+    function updateQrCodeFromInput() {
+      const url = document.getElementById('qrUrlInput').value.trim();
+      if (url) {
+        generateSvgQr(url);
+      }
+    }
+
+    function copyConnectUrl() {
+      const url = document.getElementById('qrUrlInput').value;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Keçid linki kopyalandı!');
+      }).catch(() => {
+        prompt('Linki kopyalayın:', url);
+      });
+    }
+
+    /* ==========================================================================
+       BACKUP & RESTORE
+       ========================================================================== */
+
+    function openBackupModal() {
+      const jsonStr = JSON.stringify(state.branches, null, 2);
+      document.getElementById('syncCodeTextarea').value = jsonStr;
+      openModal('backupModal');
+    }
+
+    function exportDataJson() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.branches, null, 2));
+      const downloadAnchor = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `tus_takip_backup_${dateStr}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Məlumatlar fayla yükləndi!');
+    }
+
+    function importDataJson(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          if (Array.isArray(parsed)) {
+            state.branches = parsed;
+            persistData();
+            render();
+            closeModal('backupModal');
+            showToast('Məlumatlar uğurla bərpa edildi!');
+          } else {
+            alert('Fayl formatı düzgün deyil. JSON massivi olmalıdır.');
+          }
+        } catch (err) {
+          alert('Fayl oxunarkən xəta baş verdi: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    }
+
+    function copySyncCode() {
+      const text = document.getElementById('syncCodeTextarea').value;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Sinxronizasiya kodu kopyalandı!');
+      }).catch(() => {
+        alert('Kodu xanadan əllə kopyalayın.');
+      });
+    }
+
+    function restoreFromSyncCode() {
+      const text = document.getElementById('syncCodeTextarea').value.trim();
+      if (!text) {
+        alert('Zəhmət olmasa sinxronizasiya kodunu daxil edin.');
+        return;
+      }
+      try {
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed)) {
+          state.branches = parsed;
+          persistData();
+          render();
+          closeModal('backupModal');
+          showToast('Məlumatlar koddan uğurla bərpa edildi!');
+        } else {
+          alert('Daxil edilən kod düzgün formatda deyil.');
+        }
+      } catch (err) {
+        alert('Format xətası: ' + err.message);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
